@@ -4,6 +4,7 @@ fn main() {
     handle_for();
     handle_iter();
     handle_unwrap();
+    handle_self();
 }
 
 fn handle_for() {
@@ -61,4 +62,44 @@ fn handle_unwrap() {
     let found = numbers.iter().find(|&&x| x == 3);
     println!("  Found 3: {:?}", found);
     println!("  Unwrapped: {}", found.unwrap()); // Safe because we know 3 exists
+}
+
+#[derive(Debug)]
+struct Person {
+    name: String,
+    age: u32
+}
+
+fn handle_self() {
+    let mut person = Person {
+        name: "John Doe".to_string(),
+        age: 25,
+    };
+
+    person.show_info();
+    person.have_birthday();
+    person.show_info();
+    person.consume();
+}
+
+impl Person {
+   fn new(name: &str, age: u32) -> Self {  // Self = Person
+        Self {  // Self { } = Person { }
+            name: name.to_string(),
+            age,
+        }
+    }
+
+    fn show_info(&self) {
+        println!("Name: {}, Age: {}", self.name, self.age);
+    }
+
+    fn have_birthday(&mut self) {
+        self.age += 1;
+        println!("Happy birthday, {}! You are now {} years old.", self.name, self.age);
+    }
+
+     fn consume(self) -> String {
+        format!("{} {}", self.name, self.age)
+    }
 }
