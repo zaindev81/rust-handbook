@@ -1,10 +1,14 @@
 use std::vec;
 
+use syntax::{dyn_main};
+
 fn main() {
     handle_for();
     handle_iter();
     handle_unwrap();
     handle_self();
+
+    dyn_main();
 }
 
 fn handle_for() {
