@@ -33,7 +33,12 @@ What type of project are you working on? I can give more targeted recommendation
 
 - https://doc.rust-lang.org/book/
 - https://tokio.rs/tokio
-- https://github.com/tokio-rs/tokio/tree/master/examples
 - https://serde.rs/
-- https://github.com/rust-lang/rust-by-example/tree/master
+- https://github.com/tokio-rs/tokio/tree/master/examples
 - https://github.com/tokio-rs/axum
+
+## Githubs
+
+- https://github.com/rust-lang/rust-by-example
+- https://github.com/mainmatter/100-exercises-to-learn-rust
+- https://github.com/rust-lang/rustlings
