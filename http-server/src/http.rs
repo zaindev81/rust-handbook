@@ -31,4 +31,27 @@ impl HttpResponse {
             body: String::new(),
         }
     }
+
+    pub fn with_json(status_code: u16, json_data: &Value) -> Result<Self, serde_json::Error> {
+        let mut response = Self::new(status_code);
+        response.body = serde_json::to_string_pretty(&json_data)?;
+        response.headers.insert("Content-Length".to_string(), response.body.len().to_string());
+        Ok(response)
+    }
+
+    pub fn error(status_code: u16, message: &str) -> Result<Self, serde_json::Error> {
+        let error_data = json!({
+            "error": {
+                "code": status_code,
+                "message": message,
+                "timestamp": chrono::Utc::now().to_rfc3339()
+            }
+        });
+        Self::with_json(status_code, &error_data)
+    }
+
+    pub fn with_header(mut self, key: &str, value: &str) -> Self {
+        self.headers.insert(key.to_string(), value.to_string());
+        self
+    }
 }
