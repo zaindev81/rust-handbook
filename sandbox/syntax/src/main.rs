@@ -1,6 +1,6 @@
 use std::vec;
 
-use syntax::{dyn_main};
+use syntax::{arc_main, dyn_main, impl_main, iter_main};
 
 fn main() {
     handle_for();
@@ -9,6 +9,9 @@ fn main() {
     handle_self();
 
     dyn_main();
+    arc_main();
+    impl_main();
+    iter_main();
 }
 
 fn handle_for() {
