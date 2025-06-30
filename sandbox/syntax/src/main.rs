@@ -12,6 +12,7 @@ fn main() {
     arc_main();
     impl_main();
     iter_main();
+    str_main();
 }
 
 fn handle_for() {
