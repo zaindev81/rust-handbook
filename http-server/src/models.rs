@@ -7,18 +7,18 @@ pub struct User {
     pub email: String,
     pub role: String,
     pub active: bool,
-    pub created_at: Option<String>, // Optional field for created_at timestamp
+    pub created_at: String,
 }
 
 impl User {
     pub fn new(id: u32, name: &str, email: &str, role: &str) -> Self {
-        User {
+        Self {
             id,
-            name,
-            email,
-            role,
-            active,
-            created_at: chrono::Utc::now().to_rfc3339().into(), // Set created_at to current time
+            name: name.to_string(),
+            email: email.to_string(),
+            role: role.to_string(),
+            active: true,
+            created_at: chrono::Utc::now().to_rfc3339(),
         }
     }
 
@@ -47,6 +47,7 @@ pub struct ServerMetrics {
 pub struct HealthStatus {
     pub status: String,
     pub timestamp: String,
+    pub checks: HealthChecks,
 }
 
 #[derive(Debug, Clone, Serialize)]
