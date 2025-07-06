@@ -1,6 +1,31 @@
 [package]
-name = "ude-echo-server"
+name = "udp_echo_server"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "udp_echo_server"
+path = "src/lib.rs"
+
+[[example]]
+name = "basic_server"
+path = "examples/basic_server.rs"
+
+[[example]]
+name = "custom_server"
+path = "examples/custom_server.rs"
+
+[[example]]
+name = "custom_handler"
+path = "examples/custom_handler.rs"
+
+[[example]]
+name = "multi_server"
+path = "examples/multi_server.rs"
+
+[[example]]
+name = "client"
+path = "examples/client.rs"
+
 [dependencies]
+# No external dependencies for the core library!
