@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+/// User data structure
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {
     pub id: u32,
@@ -35,6 +36,7 @@ impl User {
     }
 }
 
+/// Server metrics structure
 #[derive(Debug, Clone, Serialize)]
 pub struct ServerMetrics {
     pub total_requests: u64,
@@ -43,6 +45,7 @@ pub struct ServerMetrics {
     pub uptime_seconds: u64,
 }
 
+/// Health check status
 #[derive(Debug, Clone, Serialize)]
 pub struct HealthStatus {
     pub status: String,

@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use serde_json::Value;
+use serde_json::{json, Value};
 
 #[derive(Debug)]
 pub struct HttpRequest {

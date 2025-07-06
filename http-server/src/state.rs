@@ -3,7 +3,7 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 use crate::models::User;
 
-#[drive(Clone)]
+#[derive(Clone)]
 pub struct AppState {
     pub users: Arc<RwLock<HashMap<u32, User>>>,
     pub request_count: Arc<RwLock<u64>>,
