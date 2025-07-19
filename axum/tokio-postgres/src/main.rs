@@ -89,7 +89,7 @@ async fn db_health(State(state): State<AppState>) -> Result<Json<Value>, StatusC
     debug!("Executing database test query");
 
     let row: (i64,) = query_as("SELECT $1")
-        .bind(150_i64)
+        .bind(64_i64)
         .fetch_one(&state.db_pool)
         .await
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
