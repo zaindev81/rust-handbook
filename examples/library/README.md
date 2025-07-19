@@ -1,7 +1,8 @@
 # library
 
 - config
-- log
+- logger(tracing)
+- serde
 
 ```sh
 RUST_LOG=warn cargo run
