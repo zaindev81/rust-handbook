@@ -5,6 +5,9 @@ pub mod impl_module;
 pub mod result_module;
 pub mod iter_module;
 pub mod str_module;
+pub mod atomic_module;
+pub mod mutex_module;
+pub mod thread_module;
 
 pub use dyn_module::{dyn_main};
 pub use arc_module::{arc_main};
@@ -13,3 +16,6 @@ pub use impl_module::{impl_main};
 pub use result_module::{result_main};
 pub use iter_module::{iter_main};
 pub use str_module::{str_main};
+pub use atomic_module::{atomic_main};
+pub use mutex_module::{mutex_main};
+pub use thread_module::{thread_main};

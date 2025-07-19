@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+// In Rust, a HashMap is a collection that stores key-value pairs,
 pub fn map_main() {
     let mut scores = HashMap::new();
 

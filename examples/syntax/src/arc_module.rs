@@ -1,6 +1,8 @@
 use std::sync::Arc;
 use std::{thread, vec};
 
+// It allows multiple ownership (shared references) of the same data.
+// Useful when you need to read shared data in multiple threads.
 pub fn arc_main() {
     let data = Arc::new(String::from("Hello, Arc!"));
     let data_clone1 = Arc::clone(&data); // Cheap reference count increment

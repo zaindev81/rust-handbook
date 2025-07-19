@@ -1,6 +1,14 @@
 use std::vec;
 
-use syntax::{arc_main, dyn_main, impl_main, iter_main};
+use syntax::{
+    arc_main,
+    dyn_main,
+    impl_main,
+    iter_main,
+    atomic_main,
+    mutex_main,
+    thread_main,
+};
 
 fn main() {
     handle_for();
@@ -11,8 +19,23 @@ fn main() {
     dyn_main();
     arc_main();
     impl_main();
+
+    break_line("iter_main");
     iter_main();
-    str_main();
+    // str_main();
+
+    break_line("atomic_main");
+    atomic_main();
+
+    break_line("mutex_main");
+    mutex_main();
+
+    break_line("thread_main");
+    thread_main();
+}
+
+fn break_line(s: &str) {
+    println!("\n\n{} \n\n", s);
 }
 
 fn handle_for() {
