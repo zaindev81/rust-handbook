@@ -1,4 +1,4 @@
-# simple-server
+# tokio-postgres
 
 ```sh
 cargo run

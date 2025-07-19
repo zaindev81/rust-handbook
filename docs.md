@@ -36,6 +36,7 @@ What type of project are you working on? I can give more targeted recommendation
 - https://serde.rs/
 - https://github.com/tokio-rs/tokio/tree/master/examples
 - https://github.com/tokio-rs/axum
+- https://github.com/launchbadge/sqlx
 
 ## Githubs
 
