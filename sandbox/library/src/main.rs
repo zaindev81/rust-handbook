@@ -1,4 +1,4 @@
-use tracing::{info, warn, span};
+use tracing::{info, warn, span, Level};
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
 fn main() {
@@ -9,8 +9,6 @@ fn main() {
         )
         .with(fmt::layer())
         .init();
-
-        use tracing::{info, span, Level};
 
     let span = span!(Level::INFO, "my_span", user_id = 42);
     let _enter = span.enter();
