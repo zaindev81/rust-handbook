@@ -10,7 +10,16 @@ use tower_http::cors::{CorsLayer};
 
 #[tokio::main]
 async fn main() {
-     let cors = CorsLayer::new()
+    let app = Router::new()
+        .route("/", get(hello))
+        .route("/api", get(api_endpoint))
+        .layer(create_cors_layer());
+
+   serve(app, 3000).await;
+}
+
+fn create_cors_layer() -> CorsLayer {
+    CorsLayer::new()
         .allow_origin("http://localhost:3000".parse::<HeaderValue>().unwrap())
         .allow_methods([Method::GET, Method::POST])
         // .allow_methods(Any)
@@ -18,14 +27,7 @@ async fn main() {
             "Content-Type".parse().unwrap(),
             "Authorization".parse().unwrap(),
         ])
-        .max_age(std::time::Duration::from_secs(3600));
-
-    let app = Router::new()
-        .route("/", get(hello))
-        .route("/api", get(api_endpoint))
-        .layer(cors);
-
-   serve(app, 3000).await;
+        .max_age(std::time::Duration::from_secs(3600))
 }
 
 async fn serve(app: Router, port: u16) {
