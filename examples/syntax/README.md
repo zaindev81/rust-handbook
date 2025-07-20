@@ -1,4 +1,5 @@
 # syntax
 
 - string
-- unwrap
+- unwrap, ? (result) some
+- ownership
