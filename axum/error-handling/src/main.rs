@@ -82,7 +82,6 @@ mod time_library {
         pub fn now() -> Result<Self, Error> {
             static COUNTER: AtomicU64 = AtomicU64::new(0);
 
-            // Fail on every third call just to simulate errors
             if COUNTER.fetch_add(1, Ordering::SeqCst) % 3 == 0 {
                 Err(Error::FailedToGetTime)
             } else {
