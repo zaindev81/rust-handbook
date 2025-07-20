@@ -29,9 +29,11 @@ async fn handle_connection(mut socket: TcpStream) -> Result<(), Box<dyn std::err
 
     let request = String::from_utf8_lossy(&buffer[..bytes_read]);
     let request_line = request.lines().next().unwrap_or("");
-    
+
     println!("Request: {}", request_line);
+
     let parts: Vec<&str> = request_line.split_whitespace().collect();
+
     println!("Request parts: {:?}", parts);
 
     if parts.len() < 2 {
