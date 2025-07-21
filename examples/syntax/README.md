@@ -1,5 +1,6 @@
 # syntax
 
 - string
-- unwrap, ? (result) some
+- unwrap, ? (result)
 - ownership
+- option (Some)

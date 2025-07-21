@@ -10,7 +10,7 @@ cargo run -- copy source.txt destination.txt --force --verbose
 cargo run -- copy source.txt dist/destination.txt --force --verbose
 
 # Move a file
-cargo run -- move old_name.txt new_name.txt
+cargo run -- move old_name.txt unwanted.txt
 
 # Delete a file (with confirmation)
 cargo run -- delete unwanted.txt --verbose

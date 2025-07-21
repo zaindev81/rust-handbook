@@ -1,5 +1,4 @@
 use clap::{Arg, ArgAction, Command, ArgMatches};
-use std::fmt::format;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::io;
@@ -164,6 +163,42 @@ fn move_file(source: &Path, destination: &Path, force: bool, verbose: bool) -> i
 fn delete_file(source: &Path, force: bool, verbose: bool) -> io::Result<()> {
     if verbose {
         println!("Deleting file '{}'", source.display());
+    }
+
+    if !force {
+        print!("Are you sure you want to delete '{}'? (y/N): ", source.display());
+        io::Write::flush(&mut self::io::stdout())?;
+
+        let mut input = String::new();
+        io::stdin().read_line(&mut input)?;
+
+        let input = input.trim().to_lowercase();
+        if input != "y" && input != "yes" {
+            println!("Deletion cancelled.");
+            return Ok(());
+        }
+    }
+
+    // Check if it's a file or directory
+    let metadata = fs::metadata(source)?;
+
+    if metadata.is_file() {
+        fs::remove_file(source)?;
+        if verbose {
+            println!("Deleted file '{}'", source.display());
+        }
+    } else if metadata.is_dir() {
+        if force {
+            fs::remove_dir_all(source)?;
+            if verbose {
+                println!("Deleted directory '{}'", source.display());
+            }
+        } else {
+            return Err(io::Error::new(
+                io::ErrorKind::PermissionDenied,
+                "Force flag is required to delete directories",
+            ));
+        }
     }
 
     Ok(())
