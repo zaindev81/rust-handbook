@@ -3,7 +3,6 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::io;
 
-
 fn main() {
     let matches = Command::new("file-tool")
         .version("1.0.0")

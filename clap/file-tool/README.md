@@ -1,6 +1,5 @@
 # file-tool
 
-
 ```sh
 # Copy a file
 cargo run -- copy source.txt destination.txt
