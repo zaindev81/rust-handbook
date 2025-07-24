@@ -98,7 +98,7 @@ fn search_in_file(args: &Args, file_path: &str) -> Result<(), Box<dyn std::error
                 output.push_str(&format!("{}: ", file_path));
             }
 
-            if args.line_numbers { 
+            if args.line_numbers {
                 output.push_str(&format!("{}:", line_num));
             }
 
