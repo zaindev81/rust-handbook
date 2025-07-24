@@ -4,4 +4,5 @@
 - unwrap, ? (result)
 - ownership
 - option (Some)
-- error(aandling)
+- error(handling)
+- error(custom)

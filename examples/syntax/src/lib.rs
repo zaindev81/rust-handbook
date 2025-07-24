@@ -8,6 +8,7 @@ pub mod str_module;
 pub mod atomic_module;
 pub mod mutex_module;
 pub mod thread_module;
+pub mod err_module;
 
 pub use dyn_module::{dyn_main};
 pub use arc_module::{arc_main};
@@ -19,3 +20,4 @@ pub use str_module::{str_main};
 pub use atomic_module::{atomic_main};
 pub use mutex_module::{mutex_main};
 pub use thread_module::{thread_main};
+pub use err_module::{custom_error};
