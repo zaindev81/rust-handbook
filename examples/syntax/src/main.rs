@@ -8,7 +8,8 @@ use syntax::{
     atomic_main,
     mutex_main,
     thread_main,
-    custom_error
+    custom_error,
+    enum_main,
 };
 
 fn main() {
@@ -36,6 +37,10 @@ fn main() {
 
     break_line("custom_error");
     custom_error();
+
+    break_line("enum_main");
+    enum_main();
+
 }
 
 fn break_line(s: &str) {
