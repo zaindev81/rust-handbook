@@ -52,3 +52,13 @@ pub fn result_basic() {
 }
 
 // ? operator
+
+// alias
+// type Result<T> = std::result::Result<T, CryptoError>;
+
+// type Result<T> = std::result::Result<T, MyError>;
+
+// fn load_file(path: &str) -> Result<String> {
+//     let content = std::fs::read_to_string(path)?; // MyError
+//     Ok(content)
+// }

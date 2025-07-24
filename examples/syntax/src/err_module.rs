@@ -51,3 +51,5 @@ pub fn custom_error() {
         Err(e) => eprintln!("Error occurred: {}", e),
     }
 }
+
+// map_err

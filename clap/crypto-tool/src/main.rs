@@ -1,9 +1,9 @@
 use clap::{Parser, Subcommand};
-use std::fs;
-use std::io::{self, Write};
-use std::path::Path;
-
 use base64::{Engine as _, engine::general_purpose};
+
+use crypto_tool::file::{read_input_file, write_output};
+use crypto_tool::types::{CryptoMethod, Result};
+use crypto_tool::encrypt::{encrypt_data, decrypt_data};
 
 #[derive(Parser, Debug)]
 #[command(name = "crypto-tool")]
@@ -21,6 +21,22 @@ enum Commands {
         /// Input file path
         #[arg(short = 'i', long = "input", value_name = "FILE")]
         input: String,
+
+        /// Output file path (optional, defaults to stdout)
+        #[arg(short = 'o', long = "output", value_name = "FILE")]
+        output: Option<String>,
+
+        /// Encryption method
+        #[arg(long = "method", value_enum, default_value = "aes")]
+        method: CryptoMethod,
+
+        /// Password for encryption
+        #[arg(long = "password")]
+        password: String,
+
+        /// Enable Base64 encoding
+        #[arg(long = "base64")]
+        base64: bool,
     },
 
     #[command(about = "Decrypt a file")]
@@ -28,54 +44,44 @@ enum Commands {
         /// Input file path
         #[arg(short = 'i', long = "input", value_name = "FILE")]
         input: String,
+
+        /// Output file path (optional, defaults to stdout)
+        #[arg(short = 'o', long = "output", value_name = "FILE")]
+        output: Option<String>,
+
+        /// Encryption method
+        #[arg(long = "method", value_enum, default_value = "aes")]
+        method: CryptoMethod,
+
+        /// Password for decryption
+        #[arg(long = "password")]
+        password: String,
+
+        /// Input is Base64 encoded
+        #[arg(long = "base64")]
+        base64: bool,
     }
 }
-
-#[derive(Debug)]
-enum CryptoError {
-    IoError(io::Error),
-    CryptoError(String),
-    Base64Error(base64::DecodeError),
-    InvalidKeyLength,
-    InvalidDataLength,
-}
-
-impl From<io::Error> for CryptoError {
-    fn from(err: io::Error) -> Self {
-        CryptoError::IoError(err)
-    }
-}
-
-impl From<base64::DecodeError> for CryptoError {
-    fn from(err: base64::DecodeError) -> Self {
-        CryptoError::Base64Error(err)
-    }
-}
-
-impl std::fmt::Display for CryptoError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            CryptoError::IoError(e) => write!(f, "IO Error: {}", e),
-            CryptoError::CryptoError(e) => write!(f, "Crypto Error: {}", e),
-            CryptoError::Base64Error(e) => write!(f, "Base64 Error: {}", e),
-            CryptoError::InvalidKeyLength => write!(f, "Invalid key length"),
-            CryptoError::InvalidDataLength => write!(f, "Invalid data length"),
-        }
-    }
-}
-
-type Result<T> = std::result::Result<T, CryptoError>;
-impl std::error::Error for CryptoError {}
 
 fn main() {
     let args = Args::parse();
 
    let result = match args.command {
-        Commands::Encrypt { input } => handle_encrypt(&input),
-        Commands::Decrypt { input } => handle_decrypt(&input),
+        Commands::Encrypt { input, output, method, password, base64 } => handle_encrypt(
+            &input,
+            output.as_ref(),
+            &method,
+            &password,
+            base64,
+        ),
+         Commands::Decrypt { input, output, method, password, base64 } => handle_decrypt(
+            &input,
+            output.as_ref(),
+            &method,
+            &password,
+            base64,
+        ),
     };
-
-    // println!("{:?}", args.command)
 
     if let Err(e) = result {
         eprintln!("Error: {}", e);
@@ -83,14 +89,56 @@ fn main() {
     }
 }
 
-fn handle_encrypt(input: &str) -> Result<()> {
-    print!("handle_encrypt");
-    
+fn handle_encrypt(
+    input: &str,
+    output: Option<&String>,
+    method: &CryptoMethod,
+    password: &str,
+    use_base64: bool,
+) -> Result<()> {
+    println!("Encrypting file '{}' using {:?}...", input, method);
+
+    let data = read_input_file(input)?;
+    let encrypted = encrypt_data(&data, method, password)?;
+
+    let final_data = if use_base64 {
+        general_purpose::STANDARD.encode(&encrypted).into_bytes()
+    } else {
+        encrypted
+    };
+
+    write_output(&final_data, output)?;
+
+    if output.is_some() {
+        println!("Encryption completed successfully!");
+    }
+
     Ok(())
 }
 
-fn handle_decrypt(input: &str) -> Result<()> {
-    print!("handle_decrypt");
+fn handle_decrypt(
+    input: &str,
+    output: Option<&String>,
+    method: &CryptoMethod,
+    password: &str,
+    use_base64: bool,
+) -> Result<()> {
+    println!("Decrypting file '{}' using {:?}...", input, method);
+
+    let mut data = read_input_file(input)?;
+
+    if use_base64 {
+        let decoded = general_purpose::STANDARD.decode(&data)?;
+        data = decoded;
+    }
+
+    let decrypted = decrypt_data(&data, method, password)?;
+
+    write_output(&decrypted, output)?;
+
+    if output.is_some() {
+        println!("Decryption completed successfully!");
+    }
 
     Ok(())
 }

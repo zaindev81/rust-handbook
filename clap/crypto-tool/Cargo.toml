@@ -4,5 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+aes = "0.8.4"
 base64 = "0.22.1"
 clap = { version = "4.5.41", features = ["derive"] }
+des = "0.8.1"
+rand = "0.8"
+rsa = "0.9"
+sha2 = "0.10.9"
