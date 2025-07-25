@@ -10,6 +10,7 @@ use syntax::{
     thread_main,
     custom_error,
     enum_main,
+    date_main,
 };
 
 fn main() {
@@ -41,6 +42,8 @@ fn main() {
     break_line("enum_main");
     enum_main();
 
+    break_line("date_main");
+    date_main();
 }
 
 fn break_line(s: &str) {
