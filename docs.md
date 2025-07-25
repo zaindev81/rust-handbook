@@ -31,9 +31,9 @@ What type of project are you working on? I can give more targeted recommendation
 
 ## Resources
 
+documentation
 - https://doc.rust-lang.org/book/
-- https://serde.rs/
-- https://github.com/launchbadge/sqlx
+- https://rust-lang-nursery.github.io/rust-cookbook/
 
 tokio
 - https://tokio.rs/tokio/tutorial
@@ -44,10 +44,19 @@ axum
 - https://github.com/tokio-rs/axum
 - https://github.com/tokio-rs/axum/tree/main/examples
 
+clap
+- https://github.com/clap-rs/clap
+- https://github.com/clap-rs/clap/tree/master/examples
+
+serde
+- https://serde.rs/
+
+sqlx
+- https://github.com/launchbadge/sqlx
+
 library
 - config
 - log(tracing)
-- clap
 
 ## Githubs
 
