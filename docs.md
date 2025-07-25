@@ -36,7 +36,7 @@ What type of project are you working on? I can give more targeted recommendation
 - https://github.com/launchbadge/sqlx
 
 tokio
-- https://tokio.rs/tokio
+- https://tokio.rs/tokio/tutorial
 - https://github.com/tokio-rs/tokio
 - https://github.com/tokio-rs/tokio/tree/master/examples
 
