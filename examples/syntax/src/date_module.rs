@@ -1,7 +1,11 @@
+use std::result::Result;
+
+use anyhow::Ok;
 use chrono::NaiveDate;
 
 // cargo add chrono --features serde
-fn parse_date(s: &str) -> std::result::Result<NaiveDate, String> {
+// NaiveDate::parse_from_str は Result<NaiveDate, ParseError> -> Result<NaiveDate, String>
+fn parse_date(s: &str) -> Result<NaiveDate, String> {
     // print!("{:?}", NaiveDate::from_ymd_opt(2024, 7, 25).unwrap());
 
     NaiveDate::parse_from_str(s, "%Y-%m-%d")
@@ -14,6 +18,15 @@ pub fn date_main() {
         println!("{:?}", result)
     }
 }
+
+// fn divide(x: i32, y: i32) -> Result<i32, String> {
+//     if y == 0 {
+//         Err("division by zero".to_string())
+//             .map_err(|e| format!("Math error: {}", e))
+//     } else {
+//         Ok(x / y)
+//     }
+// }
 
 #[cfg(test)]
 mod tests {
