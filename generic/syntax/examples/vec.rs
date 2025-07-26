@@ -1,4 +1,7 @@
 fn main() {
+    //
+    // Basic
+    //
     let mut v1: Vec<i32> = Vec::new();
     v1.push(1);
     v1.push(2);
