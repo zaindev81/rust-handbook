@@ -5,6 +5,9 @@
 ```sh
 # vec
 cargo run --example vec
+
+# hashmap
+cargo run --example hashmap
 ```
 
 ## List
