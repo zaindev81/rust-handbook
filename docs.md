@@ -49,10 +49,19 @@ clap
 - https://github.com/clap-rs/clap/tree/master/examples
 
 serde
+- https://github.com/serde-rs/serde
 - https://serde.rs/
+- https://github.com/serde-rs/json
 
 sqlx
 - https://github.com/launchbadge/sqlx
+
+time
+- chrono https://github.com/chronotope/chrono
+- time
+
+cryptography
+- ring
 
 library
 - config
