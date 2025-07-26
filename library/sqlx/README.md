@@ -9,3 +9,9 @@ docker run --rm --name postgres-test \
   -p 5432:5432 \
   -d postgres:16
 ```
+
+# Run
+
+```sh
+cargo run --example quickstart
+```
