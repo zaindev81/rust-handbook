@@ -8,6 +8,9 @@ cargo run --example vec
 
 # hashmap
 cargo run --example hashmap
+
+# arc
+cargo run --example arc
 ```
 
 ## List
