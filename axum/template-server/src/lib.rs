@@ -41,7 +41,6 @@ pub async fn serve(app: Router, config: &Config) -> Result<(), Box<dyn std::erro
     Ok(())
 }
 
-/// Run the application with default configuration
 pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
     init_tracing()?;
 
