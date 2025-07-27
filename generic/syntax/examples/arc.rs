@@ -80,7 +80,6 @@ fn arc_with_rwlock_for_read_heavy_operations() {
     println!("\n");
     println!("Using Arc with RwLock for read-heavy operations==================");
 
-
     // Create a shared vector wrapped in a RwLock and Arc
     // Arc allows multiple threads to share ownership
     // RwLock allows multiple readers or one writer at a time

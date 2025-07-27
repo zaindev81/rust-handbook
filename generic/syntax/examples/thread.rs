@@ -64,5 +64,3 @@ fn sharing_data_between_thread_operations() {
         handle.join().unwrap(); // Wait for all threads to finish
     }
 }
-
-// fn mutex_for_mutable_shared_data
