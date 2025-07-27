@@ -14,6 +14,9 @@ cargo run --example arc
 
 # default
 cargo run --example default
+
+# thread
+cargo run --example thread
 ```
 
 ## List
