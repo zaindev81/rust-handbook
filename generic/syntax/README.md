@@ -11,6 +11,9 @@ cargo run --example hashmap
 
 # arc
 cargo run --example arc
+
+# default
+cargo run --example default
 ```
 
 ## List
