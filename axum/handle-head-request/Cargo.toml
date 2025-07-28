@@ -1,0 +1,11 @@
+[package]
+name = "handle-head-request"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.4"
+http-body-util = "0.1.3"
+hyper = { version = "1.6.0", features = ["full"] }
+tokio = { version = "1.47.0", features = ["full"] }
+tower = { version = "0.5.2", features = ["util"] }
