@@ -17,6 +17,15 @@ cargo run --example default
 
 # thread
 cargo run --example thread
+
+# struct
+cargo run --example struct
+
+# impl
+cargo run --example impl
+
+# err
+cargo run --example err
 ```
 
 ## List

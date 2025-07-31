@@ -1,27 +1,27 @@
 use axum::{
-    routing::{get, post},
-    http::StatusCode,
-    Json, Router,
+    extract::{FromRef, FromRequestParts, State},
+    http::{request::Parts, StatusCode},
+    routing::get,
+    Router,
 };
 use bb8::{Pool, PooledConnection};
 use bb8_redis::RedisConnectionManager;
 use redis::AsyncCommands;
-use tracing::{debug};
-use tracing_subscriber::{field::debug, prelude::*};
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+
+use bb8_redis::bb8;
 
 #[tokio::main]
 async fn main() {
-    // initialize tracing
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| format!("{}=trace", env!("CARGO_CRATE_NAME")).into()),
+                .unwrap_or_else(|_| format!("{}=debug", env!("CARGO_CRATE_NAME")).into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    debug!("connecting to redis");
-
+    tracing::debug!("connecting to redis");
     let manager = RedisConnectionManager::new("redis://localhost").unwrap();
     let pool = bb8::Pool::builder().build(manager).await.unwrap();
 
@@ -32,23 +32,70 @@ async fn main() {
         let result: String = conn.get("foo").await.unwrap();
         assert_eq!(result, "bar");
     }
+    tracing::debug!("successfully connected to redis and pinged it");
 
-    debug!("successfully connected to redis and pinged it");
-
-    // build our application with a route
+    // build our application with some routes
     let app = Router::new()
-        .route("/", get(root))
+        .route(
+            "/",
+            get(using_connection_pool_extractor).post(using_connection_extractor),
+        )
         .with_state(pool);
 
-    // run our app with hyper, listening globally on port 3000
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
+    // run it
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
         .unwrap();
-    debug!("listening on {}", listener.local_addr().unwrap());
+    tracing::debug!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
 }
 
-// basic handler that responds with a static string
-async fn root() -> &'static str {
-    "Hello, World!"
+type ConnectionPool = Pool<RedisConnectionManager>;
+
+async fn using_connection_pool_extractor(
+    State(pool): State<ConnectionPool>,
+) -> Result<String, (StatusCode, String)> {
+    let mut conn = pool.get().await.map_err(internal_error)?;
+    let result: String = conn.get("foo").await.map_err(internal_error)?;
+    println!("using_connection_pool_extractor");
+
+    Ok(result)
+}
+
+// we can also write a custom extractor that grabs a connection from the pool
+// which setup is appropriate depends on your application
+struct DatabaseConnection(PooledConnection<'static, RedisConnectionManager>);
+
+// Custom Extractor
+impl<S> FromRequestParts<S> for DatabaseConnection
+where
+    ConnectionPool: FromRef<S>,
+    S: Send + Sync,
+{
+    type Rejection = (StatusCode, String);
+
+    async fn from_request_parts(_parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
+        let pool = ConnectionPool::from_ref(state);
+        let conn = pool.get_owned().await.map_err(internal_error)?;
+
+        Ok(Self(conn))
+    }
+}
+
+async fn using_connection_extractor(
+    DatabaseConnection(mut conn): DatabaseConnection,
+) -> Result<String, (StatusCode, String)> {
+    let result: String = conn.get("foo").await.map_err(internal_error)?;
+    println!("using_connection_extractor");
+
+    Ok(result)
+}
+
+/// Utility function for mapping any error into a `500 Internal Server Error`
+/// response.
+fn internal_error<E>(err: E) -> (StatusCode, String)
+where
+    E: std::error::Error,
+{
+    (StatusCode::INTERNAL_SERVER_ERROR, err.to_string())
 }
