@@ -82,6 +82,7 @@ where
     }
 }
 
+// custom connection extractor
 async fn using_connection_extractor(
     DatabaseConnection(mut conn): DatabaseConnection,
 ) -> Result<String, (StatusCode, String)> {
