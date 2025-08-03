@@ -1,5 +1,3 @@
-
-
 #[derive(Default)]
 struct Point {
     x: i32,
