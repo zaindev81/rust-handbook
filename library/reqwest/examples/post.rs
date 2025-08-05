@@ -30,5 +30,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>{
         println!("URL: {}", url);
     }
 
+    if let Some(headers) = body.get("headers") {
+        println!("headers: {}", headers);
+    }
+
     Ok(())
 }
