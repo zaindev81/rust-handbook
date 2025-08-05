@@ -22,7 +22,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>{
     println!("{}", body);
     println!("Full response:\n{}", serde_json::to_string_pretty(&body)?);
 
-    // Access specific fields from the JSON
     if let Some(json_data) = body.get("json") {
         println!("\nSent JSON data: {}", json_data);
     }
@@ -31,7 +30,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>{
         println!("URL: {}", url);
     }
 
-
     Ok(())
-
 }
