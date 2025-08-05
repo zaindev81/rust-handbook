@@ -28,21 +28,21 @@ struct Headers {
 async fn main() -> Result<(), Box<dyn std::error::Error>>{
     let client = reqwest::Client::new();
 
-    let res = client.get("http://httpbin.org/get")
+    let res = client.get("https://httpbin.org/get")
         .send()
         .await?;
 
-    let body: GetResponse = res.json().await?;
+    let res_json: GetResponse = res.json().await?;
 
-   println!("Response: {:#?}", body);
+    println!("Response: {:#?}", res_json);
 
-    println!("\nYour IP: {}", body.origin);
-    println!("URL: {}", body.url);
+    println!("\nYour IP: {}", res_json.origin);
+    println!("URL: {}", res_json.url);
 
-    println!("Args count: {}", body.args.len());
-    println!("Header accept: {}", body.headers.accept);
-    println!("Header host: {}", body.headers.host);
-    println!("Header xAmznTraceId: {}", body.headers.x_amzn_trace_id);
+    println!("Args count: {}", res_json.args.len());
+    println!("Header accept: {}", res_json.headers.accept);
+    println!("Header host: {}", res_json.headers.host);
+    println!("Header xAmznTraceId: {}", res_json.headers.x_amzn_trace_id);
 
     Ok(())
 }
