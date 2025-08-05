@@ -1,6 +1,6 @@
 use reqwest;
 use tokio;
-use serde_json::{json, Value};
+use serde_json::{json, Value, to_string_pretty};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>>{
@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>{
     let body: Value = res.json().await?;
 
     println!("{}", body);
-    println!("Full response:\n{}", serde_json::to_string_pretty(&body)?);
+    println!("Full response:\n{}", to_string_pretty(&body)?);
 
     if let Some(json_data) = body.get("json") {
         println!("\nSent JSON data: {}", json_data);
