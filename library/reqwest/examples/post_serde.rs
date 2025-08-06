@@ -40,31 +40,34 @@ struct Headers {
 async fn main() -> Result<(), Box<dyn std::error::Error>>{
     let client = reqwest::Client::new();
 
-    let mut map = HashMap::new();
-    map.insert("lang", "rust");
-    map.insert("body", "json");
+    let mut body = HashMap::new();
+    body.insert("lang", "rust");
+    body.insert("body", "json");
 
-    let res = client.post("http://httpbin.org/post")
-        .json(&map)
+    let res = client.post("https://httpbin.org/post")
+        .json(&body)
         .send()
         .await?;
 
-    let body: PostResponse = res.json().await?;
-    println!("Response: {:#?}", body);
+    let res_json: PostResponse = res.json().await?;
+    // let res_json = res.json::<PostResponse>().await?;
+    println!("Response: {:?}", res_json);
+    println!("Response: {:#?}", res_json);
 
-    if let Some(json) = body.json {
+    if let Some(json) = res_json.json {
         println!("Language: {}", json.lang);
         println!("Body: {}", json.body);
     }
 
-    println!("URL: {}", body.url);
-    println!("Origin: {}", body.origin);
-    println!("Content-Type header: {}", body.headers.content_type);
-    println!("Accept: {}", body.headers.accept);
-    println!("Content-Length: {}", body.headers.content_length);
-    println!("Content-Type: {}", body.headers.content_type);
-    println!("Host: {}", body.headers.host);
-    println!("X-Amzn-Trace-Id: {}", body.headers.x_amzn_trace_id);
+    println!("URL: {}", res_json.url);
+    println!("Origin: {}", res_json.origin);
+
+    println!("Content-Type header: {}", res_json.headers.content_type);
+    println!("Accept: {}", res_json.headers.accept);
+    println!("Content-Length: {}", res_json.headers.content_length);
+    println!("Content-Type: {}", res_json.headers.content_type);
+    println!("Host: {}", res_json.headers.host);
+    println!("X-Amzn-Trace-Id: {}", res_json.headers.x_amzn_trace_id);
 
     Ok(())
 }

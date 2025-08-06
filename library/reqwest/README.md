@@ -12,4 +12,6 @@ cargo run --example get_serde
 cargo run --example post
 
 cargo run --example post_serde
+
+cargo run --example example
 ```
