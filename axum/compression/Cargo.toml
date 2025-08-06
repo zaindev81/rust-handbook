@@ -11,3 +11,10 @@ tower = "0.5.2"
 tower-http = { version = "0.6.6", features = ["compression-br", "decompression-br"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+
+[dev-dependencies]
+assert-json-diff = "2.0"
+brotli = "6.0"
+flate2 = "1"
+http = "1"
+zstd = "0.13"

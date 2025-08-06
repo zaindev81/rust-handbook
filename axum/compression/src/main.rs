@@ -1,4 +1,4 @@
-use axum::{routing::{get, post}, Json, Router};
+use axum::{routing::post, Json, Router};
 use serde_json::Value;
 use tower::ServiceBuilder;
 use tower_http::{compression::CompressionLayer, decompression::RequestDecompressionLayer};
@@ -27,20 +27,13 @@ async fn main() {
 }
 
 fn app() -> Router {
-    Router::new()
-        .route("/", post(root))
-        .route("/hello", get(hello))
-        .layer(
-            ServiceBuilder::new()
-            .layer(RequestDecompressionLayer::new()) // gzip
-            .layer(CompressionLayer::new()), // gzip
-        )
+    Router::new().route("/", post(root)).layer(
+        ServiceBuilder::new()
+            .layer(RequestDecompressionLayer::new())
+            .layer(CompressionLayer::new()),
+    )
 }
 
 async fn root(Json(value): Json<Value>) -> Json<Value> {
     Json(value)
-}
-
-async fn hello() -> &'static str {
-    "Hello, World!"
 }
