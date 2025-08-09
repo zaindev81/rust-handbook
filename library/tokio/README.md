@@ -5,6 +5,9 @@
 - https://github.com/tokio-rs/tokio/tree/master/examples
 
 ```sh
+# example
+cargo run --example example
+
 # hello_world
 ncat -l 6142
 cargo run --example hello_world
@@ -13,7 +16,6 @@ cargo run --example hello_world
 mini-redis-server --port 6380
 mini-redis-cli --port 6380 set foo bar
 mini-redis-cli --port 6380 get foo
-
 cargo run --example mini_redis_tutorial
 
 # echo_tcp_server
