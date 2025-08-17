@@ -33,7 +33,7 @@ pub fn create_app_with_config(config: Config) -> Router {
 }
 
 pub async fn serve(app: Router, config: &Config) -> Result<(), Box<dyn std::error::Error>> {
-     let addr: SocketAddr = config.server_addr().parse()?;
+    let addr: SocketAddr = config.server_addr().parse()?;
     let listener = tokio::net::TcpListener::bind(addr).await?;
 
     info!("Listening on http://{}", addr);
