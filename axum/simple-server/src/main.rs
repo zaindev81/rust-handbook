@@ -7,15 +7,16 @@ use serde::{Deserialize, Serialize};
 use tracing::debug;
 use tracing_subscriber::prelude::*;
 
-#[tokio::main]
+#[tokio::main] // marks this as the asynchronous entrypoint, running on the Tokio runtime (needed for async code).
 async fn main() {
     // initialize tracing
     tracing_subscriber::registry()
         .with(
+            // reads logging level from env var RUST_LOG.
             tracing_subscriber::EnvFilter::try_from_default_env()
                 .unwrap_or_else(|_| format!("{}=trace", env!("CARGO_CRATE_NAME")).into()),
         )
-        .with(tracing_subscriber::fmt::layer())
+        .with(tracing_subscriber::fmt::layer()) // makes logs human-readable.
         .init();
 
     // build our application with a route
@@ -32,6 +33,7 @@ async fn main() {
 }
 
 // basic handler that responds with a static string
+// the string lives for the entire lifetime of the program (stored in the program’s binary).
 async fn root() -> &'static str {
     "Hello, World!"
 }
@@ -53,12 +55,14 @@ async fn create_user(
 }
 
 // the input to our `create_user` handler
+// allows JSON → struct conversion.
 #[derive(Deserialize)]
 struct CreateUser {
     username: String,
 }
 
 // the output to our `create_user` handler
+// allows struct → JSON conversion.
 #[derive(Serialize)]
 struct User {
     id: u64,

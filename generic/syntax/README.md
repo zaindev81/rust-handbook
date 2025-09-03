@@ -45,3 +45,9 @@ cargo run --example err
 - result
 - str
 - thread
+
+## TODO
+
+- mux
+- format
+- clone

@@ -1,9 +1,10 @@
 # simple-server
 
 ```sh
+# Run the server in development mode
 cargo run
 
-# http
-http http://localhost:3000
-http POST http://localhost:3000/users username=john
+# --- Test with HTTPie ---
+http :3000
+http POST :3000/users username=john
 ```
