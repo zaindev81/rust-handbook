@@ -42,6 +42,11 @@ struct CreateUser {
     username: String,
 }
 
+#[derive(Deserialize)]
+struct UpdateUser {
+    username: String,
+}
+
 #[derive(Serialize)]
 struct CreateUserResponse {
     ok: bool,
@@ -70,9 +75,9 @@ async fn main() {
         .route("/hello", get(hello))
         .route("/hello/{name}", get(hello_path))
         .route("/hello/query", get(hello_query))
-        .route("/users", post(create_user).get(list_users))
-        .route("/users/{id}", get(get_user))
         .route("/echo", post(echo))
+        .route("/users", post(create_user).get(list_users))
+        .route("/users/{id}", get(get_user).patch(update_user).delete(delete_user))
         .with_state(state);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
@@ -96,6 +101,10 @@ async fn hello_path(Path(name): Path<String>) -> (StatusCode, String) {
 async fn hello_query(Query(params): Query<HelloQuery>) -> (StatusCode, String) {
     let msg = params.msg.unwrap_or_else(|| "Msg Hello World!".to_string());
     (StatusCode::OK, msg)
+}
+
+async fn echo(Json(body): Json<JsonValue>) -> (StatusCode, Json<JsonValue>) {
+    (StatusCode::OK, Json(body))
 }
 
 async fn create_user(
@@ -155,6 +164,35 @@ async fn get_user(
     }
 }
 
-async fn echo(Json(body): Json<JsonValue>) -> (StatusCode, Json<JsonValue>) {
-    (StatusCode::OK, Json(body))
+async fn update_user(
+    State(state): State<Arc<AppState>>,
+    Path(id): Path<u32>,
+    Json(payload): Json<UpdateUser>,
+) -> (StatusCode, Json<Option<User>>) {
+    if payload.username.trim().is_empty() {
+        return (StatusCode::BAD_REQUEST, Json(None));
+    }
+
+    let mut users = state.users.lock().await;
+
+    if let Some(u) = users.iter_mut().find(|u| u.id == id) {
+        u.username = payload.username;
+        return (StatusCode::OK, Json(Some(u.clone())));
+    }
+
+    (StatusCode::NOT_FOUND, Json(None))
+}
+
+async fn delete_user(
+    State(state): State<Arc<AppState>>,
+    Path(id): Path<u32>,
+) -> StatusCode {
+    let mut users = state.users.lock().await;
+
+    if let Some(pos) = users.iter().position(|u| u.id == id) {
+        users.remove(pos);
+        StatusCode::NO_CONTENT
+    } else {
+        StatusCode::NOT_FOUND
+    }
 }
