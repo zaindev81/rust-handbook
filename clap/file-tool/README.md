@@ -1,5 +1,17 @@
 # file-tool
 
+A simple command-line file manipulation tool written in Rust.
+Supports **copy**, **move**, and **delete** operations with optional flags for force and verbose output.
+
+## Features
+- **Copy files** with optional directory creation.
+- **Move files** safely with overwrite protection.
+- **Delete files or directories** with optional confirmation prompt.
+- Verbose output for detailed logs.
+- Force flag to overwrite or skip confirmations.
+
+## Usage
+
 ```sh
 # Copy a file
 cargo run -- copy source.txt destination.txt
