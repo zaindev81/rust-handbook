@@ -1,92 +1,79 @@
-use clap::{Arg, ArgAction, Command, ArgMatches};
+use clap::{Parser, ValueEnum};
 use std::fs;
+use std::io::{self, Write};
 use std::path::{Path, PathBuf};
-use std::io;
+
+/// A file manipulation tool for copy, move, and delete operations
+#[derive(Parser, Debug)]
+#[command(version = "1.0.0", about = "A file manipulation tool for copy, move, and delete operations")]
+struct Args {
+    /// Operation to perform: copy, move, or delete
+    #[arg(value_enum)]
+    operation: Operation,
+
+    /// Source file path
+    source: String,
+
+    /// Destination file path (required for copy and move)
+    destination: Option<String>,
+
+    /// Force operation (overwrite existing files or delete without prompt)
+    #[arg(short, long)]
+    force: bool,
+
+    /// Enable verbose output
+    #[arg(short, long)]
+    verbose: bool,
+}
+
+#[derive(Debug, Clone, ValueEnum)]
+enum Operation {
+    Copy,
+    Move,
+    Delete,
+}
 
 fn main() {
-    let matches = Command::new("file-tool")
-        .version("1.0.0")
-        .about("A file manipulation tool for copy, move, and delete operations")
-        .arg(
-            Arg::new("operation")
-                .help("Operation to perform")
-                .required(true)
-                .value_parser(["copy", "move", "delete"])
-                .index(1)
-        )
-        .arg(
-            Arg::new("source")
-                .help("Source file path")
-                .required(true)
-                .index(2)
-        )
-        .arg(
-            Arg::new("destination")
-                .help("Destination file path (required for copy and move)")
-                .index(3)
-        )
-        .arg(
-            Arg::new("force")
-                .short('f')
-                .long("force")
-                .help("Force operation (overwrite existing files)")
-                .action(ArgAction::SetTrue)
-        )
-        .arg(
-            Arg::new("verbose")
-                .short('v')
-                .long("verbose")
-                .help("Enable verbose output")
-                .action(ArgAction::SetTrue)
-        )
-        .get_matches();
+    let args = Args::parse();
 
-    if let Err(e) = run(&matches) {
+    if let Err(e) = run(&args) {
         eprintln!("Error: {}", e);
         std::process::exit(1);
     }
 }
 
-fn run(matches: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
-    let operation = matches.get_one::<String>("operation").unwrap();
-    let source = matches.get_one::<String>("source").unwrap();
-    let destination = matches.get_one::<String>("destination");
-    let force = matches.get_flag("force");
-    let verbose = matches.get_flag("verbose");
+fn run(args: &Args) -> Result<(), Box<dyn std::error::Error>> {
+    let source_path = PathBuf::from(&args.source);
 
-    let source_path = PathBuf::from(source);
-
-    match operation.as_str() {
-        "copy" | "move" => {
-            if destination.is_none() {
+    match args.operation {
+        Operation::Copy | Operation::Move => {
+            if args.destination.is_none() {
                 return Err("Destination path is required for copy and move operations".into());
             }
         }
-        "delete" => {
-            if destination.is_some() {
+        Operation::Delete => {
+            if args.destination.is_some() {
                 return Err("Destination path is not required for delete operation".into());
             }
         }
-        _ => unreachable!(),
     }
 
     if !source_path.exists() {
-        return Err(format!("Source file '{}' does not exist", source).into());
+        return Err(format!("Source file '{}' does not exist", args.source).into());
     }
 
-    match operation.as_str() {
-        "copy" => {
-            let dest_path = PathBuf::from(destination.unwrap());
-            copy_file(&source_path, &dest_path, force, verbose)?;
-        },
-        "move" => {
-            let dest_path = PathBuf::from(destination.unwrap());
-            move_file(&source_path, &dest_path, force, verbose)?;
-        },
-        "delete" => {
-            delete_file(&source_path, force, verbose)?;
-        },
-        _ => unreachable!(),
+    match args.operation {
+        Operation::Copy => {
+            let dest_path = PathBuf::from(args.destination.as_ref().unwrap());
+            copy_file(&source_path, &dest_path, args.force, args.verbose)?;
+        }
+        Operation::Move => {
+            let dest_path = PathBuf::from(args.destination.as_ref().unwrap());
+            move_file(&source_path, &dest_path, args.force, args.verbose)?;
+        }
+        Operation::Delete => {
+            delete_file(&source_path, args.force, args.verbose)?;
+        }
     }
 
     Ok(())
@@ -100,12 +87,14 @@ fn copy_file(source: &Path, destination: &Path, force: bool, verbose: bool) -> i
     if destination.exists() && !force {
         return Err(io::Error::new(
             io::ErrorKind::AlreadyExists,
-            "Destination file already exists"
+            "Destination file already exists",
         ));
     }
 
     if let Some(parent) = destination.parent() {
-        println!("Ensuring parent directory exists: '{}'", parent.display());
+        if verbose {
+            println!("Ensuring parent directory exists: '{}'", parent.display());
+        }
 
         if !parent.exists() {
             if verbose {
@@ -119,7 +108,12 @@ fn copy_file(source: &Path, destination: &Path, force: bool, verbose: bool) -> i
 
     if verbose {
         let metadata = fs::metadata(source)?;
-        println!("Copied '{}' to '{}', size: {} bytes", source.display(), destination.display(), metadata.len());
+        println!(
+            "Copied '{}' to '{}', size: {} bytes",
+            source.display(),
+            destination.display(),
+            metadata.len()
+        );
     }
 
     Ok(())
@@ -137,9 +131,10 @@ fn move_file(source: &Path, destination: &Path, force: bool, verbose: bool) -> i
         ));
     }
 
-
     if let Some(parent) = destination.parent() {
-        println!("Ensuring parent directory exists: '{}'", parent.display());
+        if verbose {
+            println!("Ensuring parent directory exists: '{}'", parent.display());
+        }
 
         if !parent.exists() {
             if verbose {
@@ -153,7 +148,12 @@ fn move_file(source: &Path, destination: &Path, force: bool, verbose: bool) -> i
 
     if verbose {
         let metadata = fs::metadata(source)?;
-        println!("Moved '{}' to '{}', size: {} bytes", source.display(), destination.display(), metadata.len());
+        println!(
+            "Moved '{}' to '{}', size: {} bytes",
+            source.display(),
+            destination.display(),
+            metadata.len()
+        );
     }
 
     Ok(())
@@ -166,7 +166,7 @@ fn delete_file(source: &Path, force: bool, verbose: bool) -> io::Result<()> {
 
     if !force {
         print!("Are you sure you want to delete '{}'? (y/N): ", source.display());
-        io::Write::flush(&mut self::io::stdout())?;
+        io::stdout().flush()?;
 
         let mut input = String::new();
         io::stdin().read_line(&mut input)?;
@@ -178,7 +178,6 @@ fn delete_file(source: &Path, force: bool, verbose: bool) -> io::Result<()> {
         }
     }
 
-    // Check if it's a file or directory
     let metadata = fs::metadata(source)?;
 
     if metadata.is_file() {
