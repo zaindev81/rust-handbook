@@ -1,4 +1,4 @@
-# rust-network
+# rust-handbook
 
 This project contains various Rust-based networking examples and utilities.
 
