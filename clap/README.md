@@ -46,8 +46,8 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    for _ in 0..args.count {
-        println!("Hello {}!", args.name);
+    for i in 0..args.count {
+        println!("Hello {}! ({})", args.name, i + 1);
     }
 }
 ```
