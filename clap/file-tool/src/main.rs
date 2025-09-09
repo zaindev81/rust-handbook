@@ -124,39 +124,43 @@ fn move_file(source: &Path, destination: &Path, force: bool, verbose: bool) -> i
         println!("Moving from '{}' to '{}'", source.display(), destination.display());
     }
 
-    if destination.exists() && !force {
-        return Err(io::Error::new(
-            io::ErrorKind::AlreadyExists,
-            format!("Destination file '{}' already exists", destination.display()),
-        ));
+    if source == destination {
+        if verbose { println!("Source and destination are the same; nothing to do."); }
+        return Ok(());
+    }
+
+    if destination.exists() {
+        if !force {
+            return Err(io::Error::new(
+                io::ErrorKind::AlreadyExists,
+                format!("Destination file '{}' already exists", destination.display()),
+            ));
+        }
+        if destination.is_dir() {
+            return Err(io::Error::new(
+                io::ErrorKind::Other,
+                format!("Destination '{}' is a directory", destination.display()),
+            ));
+        }
+        if verbose { println!("Removing existing destination '{}'", destination.display()); }
+        fs::remove_file(destination)?;
     }
 
     if let Some(parent) = destination.parent() {
-        if verbose {
-            println!("Ensuring parent directory exists: '{}'", parent.display());
-        }
-
         if !parent.exists() {
-            if verbose {
-                println!("Creating parent directory '{}'", parent.display());
-            }
+            if verbose { println!("Creating parent directory '{}'", parent.display()); }
             fs::create_dir_all(parent)?;
         }
     }
 
-    fs::copy(source, destination)?;
-
-    if verbose {
-        let metadata = fs::metadata(source)?;
-        println!(
-            "Moved '{}' to '{}', size: {} bytes",
-            source.display(),
-            destination.display(),
-            metadata.len()
-        );
+    match fs::rename(source, destination) {
+        Ok(_) => return Ok(()),
+        Err(_) => {
+            fs::copy(source, destination)?;
+            fs::remove_file(source)?;
+            return Ok(());
+        }
     }
-
-    Ok(())
 }
 
 fn delete_file(source: &Path, force: bool, verbose: bool) -> io::Result<()> {
