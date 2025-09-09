@@ -19,6 +19,27 @@ A full featured, fast Command Line Argument Parser for Rust
 - 9. Backup Tool `backup-tool`
 - 10. System Monitor Tool `sys-monitor`
 
+## Other Topics
+
+1. `file-sync` – Synchronize files between directories or remote servers
+2. `csv-analyzer` – Analyze CSV files
+3. `json-formatter` – Pretty-print or minify JSON files
+4. `test-runner` – Run unit tests in multiple languages
+5. `dep-check` – Check for outdated dependencies in projects
+6. `docker-helper` – Manage Docker images and containers
+7. `net-scan` – Scan local or remote networks for active hosts
+8. `sys-info` – Show system information (CPU, memory, disk usage)
+9. `port-check` – Check if a specific port is open on a host
+10. `hash-tool` – Generate or verify file hashes (MD5, SHA256)
+11. `jwt-inspector` – Decode and inspect JWT tokens
+12. `password-gen` – Generate random secure passwords
+13. `log-summarizer` – Summarize large log files by error frequency
+14. `task-scheduler` – Run tasks on a schedule (cron-like tool)
+15. `data-cleaner` – Clean and normalize datasets for ML pipelines
+16. `note-cli` – Create and manage text notes in terminal
+17. `time-tracker` – Track time spent on tasks and projects
+18. `todo-cli` – Simple to-do list manager
+
 ## Example
 
 ```sh
