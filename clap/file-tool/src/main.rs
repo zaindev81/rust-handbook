@@ -43,6 +43,9 @@ fn main() {
 }
 
 fn run(args: &Args) -> Result<(), Box<dyn std::error::Error>> {
+    // Convert the `source` String from the arguments into a PathBuf.
+    // Use `&args.source` to borrow the String as a reference,
+    // so the original value in `args` is not moved.
     let source_path = PathBuf::from(&args.source);
 
     match args.operation {
@@ -64,6 +67,9 @@ fn run(args: &Args) -> Result<(), Box<dyn std::error::Error>> {
 
     match args.operation {
         Operation::Copy => {
+            // Convert the `destination` Option<String> into a PathBuf.
+            // `as_ref()` converts `Option<String>` to `Option<&String>` without taking ownership.
+            // `unwrap()` is safe here because we have already checked that `destination` is Some().
             let dest_path = PathBuf::from(args.destination.as_ref().unwrap());
             copy_file(&source_path, &dest_path, args.force, args.verbose)?;
         }
@@ -142,13 +148,17 @@ fn move_file(source: &Path, destination: &Path, force: bool, verbose: bool) -> i
                 format!("Destination '{}' is a directory", destination.display()),
             ));
         }
-        if verbose { println!("Removing existing destination '{}'", destination.display()); }
+        if verbose {
+            println!("Removing existing destination '{}'", destination.display());
+        }
         fs::remove_file(destination)?;
     }
 
     if let Some(parent) = destination.parent() {
         if !parent.exists() {
-            if verbose { println!("Creating parent directory '{}'", parent.display()); }
+            if verbose {
+                println!("Creating parent directory '{}'", parent.display());
+            }
             fs::create_dir_all(parent)?;
         }
     }
@@ -170,6 +180,8 @@ fn delete_file(source: &Path, force: bool, verbose: bool) -> io::Result<()> {
 
     if !force {
         print!("Are you sure you want to delete '{}'? (y/N): ", source.display());
+        // io::stdout() → gets a handle to the standard output (stdout).
+        // .flush() → forces the buffer to immediately write its contents to the terminal.
         io::stdout().flush()?;
 
         let mut input = String::new();
