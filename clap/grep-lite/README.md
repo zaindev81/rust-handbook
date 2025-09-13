@@ -17,3 +17,9 @@ cargo run -- "debug" app.log --invert
 # Combine flags
 cargo run -- "exception" log1.txt log2.txt --line-numbers --case-sensitive --count
 ```
+
+Test
+
+```sh
+cargo test
+```

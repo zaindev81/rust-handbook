@@ -11,7 +11,6 @@ cargo run --example hello_world
 **Project Structure**
 
 ```sh
-.
 ├── README.md
 ├── application – Example applications
 ├── axum – Axum framework examples

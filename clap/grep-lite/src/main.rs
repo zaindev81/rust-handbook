@@ -47,8 +47,10 @@ fn main() {
 
 fn search_in_file(args: &Args, file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let file = File::open(file_path)?;
+    // Wraps it in BufReader for efficient line-by-line reading.
     let reader = BufReader::new(file);
 
+    // "Case sensitive" means that uppercase and lowercase letters are treated as different characters.
     let pattern = if args.case_sensitive {
         args.pattern.clone()
     } else {
@@ -70,7 +72,12 @@ fn search_in_file(args: &Args, file_path: &str) -> Result<(), Box<dyn std::error
         };
 
         let is_match = search_line.contains(&pattern);
-        let should_include = if args.invert { is_match } else { !is_match };
+        // let should_include = if args.invert { is_match } else { !is_match };
+        let should_include = if args.invert {
+            is_match
+        } else {
+            !is_match
+        };
 
         if should_include {
             total_matches += 1;
