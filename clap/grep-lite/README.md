@@ -2,7 +2,7 @@
 
 ```sh
 # Basic search
-cargo run -- "error" log1.txt log2.txt
+cargo run -- "Error" log1.txt log2.txt
 
 # With line numbers and case sensitivity
 cargo run -- "Error" log1.txt --line-numbers --case-sensitive

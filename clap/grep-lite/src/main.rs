@@ -1,6 +1,7 @@
 use clap::Parser;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::path::Path;
 
 #[derive(Parser, Debug)]
 #[command(name = "grep-lite")]
@@ -25,7 +26,7 @@ struct Args {
     #[arg(long)]
     count: bool,
 
-    /// Show lines that don't match the pattern(reverse)
+    /// Show lines that don't match the pattern (reverse)
     #[arg(long)]
     invert: bool,
 }
@@ -39,18 +40,24 @@ fn main() {
     }
 
     for file_path in &args.files {
-        if let Err(e) = search_in_file(&args, &file_path) {
+        if let Err(e) = search_in_file(&args, file_path) {
             eprintln!("Error searching in file '{}': {}", file_path, e);
         }
     }
 }
 
-fn search_in_file(args: &Args, file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let file = File::open(file_path)?;
-    // Wraps it in BufReader for efficient line-by-line reading.
+/// Search lines in a file according to options.
+/// Accepts anything that can be referenced as a Path.
+fn search_in_file<P: AsRef<Path>>(
+    args: &Args,
+    file_path: P,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let path = file_path.as_ref();
+    let file = File::open(path)?;
+    // Wrap in BufReader for efficient line-by-line reading.
     let reader = BufReader::new(file);
 
-    // "Case sensitive" means that uppercase and lowercase letters are treated as different characters.
+    // "Case sensitive" means uppercase and lowercase are treated differently.
     let pattern = if args.case_sensitive {
         args.pattern.clone()
     } else {
@@ -58,12 +65,9 @@ fn search_in_file(args: &Args, file_path: &str) -> Result<(), Box<dyn std::error
     };
 
     let mut matches = Vec::new();
-    let mut total_matches = 0;
+    let mut total_matches = 0usize;
 
     for (line_number, line) in reader.lines().enumerate() {
-        // println!("Processing line {} in file '{}'", line_number + 1, file_path);
-        // println!("Line content: {:?}", line);
-
         let line = line?;
         let search_line = if args.case_sensitive {
             line.clone()
@@ -72,12 +76,8 @@ fn search_in_file(args: &Args, file_path: &str) -> Result<(), Box<dyn std::error
         };
 
         let is_match = search_line.contains(&pattern);
-        // let should_include = if args.invert { is_match } else { !is_match };
-        let should_include = if args.invert {
-            is_match
-        } else {
-            !is_match
-        };
+
+        let should_include = if args.invert { !is_match } else { is_match };
 
         if should_include {
             total_matches += 1;
@@ -93,16 +93,16 @@ fn search_in_file(args: &Args, file_path: &str) -> Result<(), Box<dyn std::error
 
     if args.count {
         if multiple_files {
-            println!("{}: {} matches", file_path, total_matches);
+            println!("{}: {} matches", path.display(), total_matches);
         } else {
-            println!("{} matches", total_matches);
+            println!("{}", total_matches);
         }
     } else {
         for (line_num, line) in matches {
             let mut output = String::new();
 
             if multiple_files {
-                output.push_str(&format!("{}: ", file_path));
+                output.push_str(&format!("{}: ", path.display()));
             }
 
             if args.line_numbers {
@@ -134,14 +134,14 @@ mod tests {
         let file = create_test_file("Hello world\nThis is an error\nAnother line");
         let args = Args {
             pattern: "error".to_string(),
-            files: vec![file.path().to_string_lossy().to_string()],
+            files: vec![file.path().display().to_string()],
             case_sensitive: true,
             line_numbers: false,
             count: false,
             invert: false,
         };
 
-        assert!(search_in_file(&args, &file.path().to_string_lossy()).is_ok());
+        assert!(search_in_file(&args, file.path()).is_ok());
     }
 
     #[test]
@@ -149,13 +149,27 @@ mod tests {
         let file = create_test_file("Error\nerror\nERROR");
         let args = Args {
             pattern: "error".to_string(),
-            files: vec![file.path().to_string_lossy().to_string()],
+            files: vec![file.path().display().to_string()],
             case_sensitive: true,
             line_numbers: false,
             count: false,
             invert: false,
         };
 
-        assert!(search_in_file(&args, &file.path().to_string_lossy()).is_ok());
+        assert!(search_in_file(&args, file.path()).is_ok());
+    }
+
+    #[test]
+    fn test_invert_logic() {
+        let file = create_test_file("foo\nbar\nfoo bar");
+        let args = Args {
+            pattern: "foo".to_string(),
+            files: vec![file.path().display().to_string()],
+            case_sensitive: true,
+            line_numbers: false,
+            count: true,
+            invert: true,
+        };
+        assert!(search_in_file(&args, file.path()).is_ok());
     }
 }
