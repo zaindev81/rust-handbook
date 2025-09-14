@@ -2,7 +2,7 @@ use clap::Parser;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 #[command(name = "grep-lite")]
 #[command(about = "A lightweight text search tool")]
 #[command(version = "1.0")]
