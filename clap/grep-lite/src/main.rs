@@ -31,6 +31,7 @@ struct Args {
     invert: bool,
 }
 
+// cargo run -- "Error" log1.txt log2.txt
 fn main() {
     let args = Args::parse();
 
@@ -48,11 +49,12 @@ fn main() {
 
 /// Search lines in a file according to options.
 /// Accepts anything that can be referenced as a Path.
+/// The AsRef<Path> trait means that any type that can be converted to a Path reference is allowed.
 fn search_in_file<P: AsRef<Path>>(
     args: &Args,
     file_path: P,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let path = file_path.as_ref();
+    let path = file_path.as_ref(); // Converts the generic file_path into a &Path reference.
     let file = File::open(path)?;
     // Wrap in BufReader for efficient line-by-line reading.
     let reader = BufReader::new(file);
@@ -65,7 +67,7 @@ fn search_in_file<P: AsRef<Path>>(
     };
 
     let mut matches = Vec::new();
-    let mut total_matches = 0usize;
+    let mut total_matches = 0usize; // 0usize explicitly sets the type to usize:
 
     for (line_number, line) in reader.lines().enumerate() {
         let line = line?;
@@ -102,7 +104,7 @@ fn search_in_file<P: AsRef<Path>>(
             let mut output = String::new();
 
             if multiple_files {
-                output.push_str(&format!("{}: ", path.display()));
+                output.push_str(&format!("{}: ", path.display())); // log1.txt:
             }
 
             if args.line_numbers {

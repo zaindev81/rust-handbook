@@ -8,6 +8,13 @@ cargo run -- "Error" log1.txt log2.txt
 cargo run -- "Error" log1.txt --line-numbers --case-sensitive
 cargo run -- "Error" log1.txt log2.txt --line-numbers --case-sensitive
 
+# examples
+cargo run -- "Error" log1.txt --line-numbers
+cargo run -- "Error" log1.txt --line-numbers --case-sensitive
+cargo run -- "Error" log1.txt --line-numbers --case-sensitive --count
+cargo run -- "Error" log1.txt --line-numbers --invert
+
+
 # Count matches only
 cargo run -- "warning" app.log --count
 
