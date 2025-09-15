@@ -6,3 +6,9 @@
 - https://github.com/mainmatter/100-exercises-to-learn-rust
 - https://github.com/ProgrammingRust/examples
 - https://github.com/rust-unofficial/awesome-rust
+
+
+```sh
+cookbook
+syntax
+```
