@@ -19,6 +19,24 @@ impl From<Filter> for &'static str {
     }
 }
 
+enum ImageFilter {
+    Blur,
+    Brighten,
+    Crop,
+    Rotate,
+}
+
+impl ImageFilter {
+    fn apply(&self) {
+        match self {
+            ImageFilter::Blur => println!("Applying blur"),
+            ImageFilter::Brighten => println!("Making it brighter"),
+            ImageFilter::Crop => println!("Cropping the image"),
+            ImageFilter::Rotate => println!("Rotating the image"),
+        }
+    }
+}
+
 fn main() {
     let filter = Filter::Blur;
     let filter_str: &'static str = filter.into();
@@ -27,4 +45,7 @@ fn main() {
     let f = Filter::Crop;
     let s: &'static str = f.into();
     println!("Filter as string: {}", s);
+
+    let ig = ImageFilter::Rotate;
+    ig.apply();
 }
