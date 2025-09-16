@@ -31,7 +31,6 @@ impl From<HttpMethod> for Method {
 #[derive(Parser, Debug)]
 #[command(name = "http-client")]
 #[command(version = "1.0.0")]
-#[command(author = "Your Name <your.email@example.com>")]
 #[command(about = "A simple HTTP client CLI tool")]
 struct Cli {
     /// The URL to request
@@ -142,18 +141,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Body selection
     let mut body_to_send: Option<Vec<u8>> = None;
 
+    // as_ref() converts the Option<String> into an Option<&String>.
+    // It does not consume the value. Instead, it gives a reference to the inner value.
     if let Some(json_str) = args.json.as_ref() {
         // Validate JSON once; also set Content-Type if not provided
         let _parsed: Value = serde_json::from_str(json_str)
             .map_err(|e| format!("Provided --json is not valid JSON: {}", e))?;
 
         println!("Sending JSON body: {}", json_str);
+
         if !headers.contains_key(reqwest::header::CONTENT_TYPE) {
             headers.insert(
                 reqwest::header::CONTENT_TYPE,
                 reqwest::header::HeaderValue::from_static("application/json"),
             );
         }
+
+        // This pattern is very common when preparing data for HTTP requests in Rust.
+        // Take the json_str reference (&String).
+        // Convert it to bytes (&[u8]) using as_bytes().
+        // Copy those bytes into a Vec<u8> using to_vec().
+        // Wrap it in Some(...) because body_to_send is an Option<Vec<u8>>.
         body_to_send = Some(json_str.as_bytes().to_vec());
     } else if let Some(raw) = args.body.as_ref() {
         body_to_send = Some(raw.as_bytes().to_vec());
@@ -164,8 +172,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         for (k, v) in headers.iter() {
             eprintln!("> {}: {}", k, v.to_str().unwrap_or("<binary>"));
         }
+
+        // Some(ref b):
+        // Checks if body_to_send contains a value (Some).
+        // If yes, borrows the inner value (Vec<u8>) as b by reference.
+        // This avoids moving the data out of body_to_send.
         if let Some(ref b) = body_to_send {
             // Print a preview only
+            // b is a vector of raw bytes (&Vec<u8>).
+            // from_utf8_lossy tries to interpret the bytes as UTF-8 text.
             let preview = String::from_utf8_lossy(b);
             let preview = if preview.len() > 500 {
                 format!("{}... ({} bytes)", &preview[..500], b.len())

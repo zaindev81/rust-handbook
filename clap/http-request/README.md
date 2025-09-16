@@ -50,7 +50,7 @@ cargo run -- --method post https://httpbin.org/post -j '{"name":"jack","age":20}
 ### POST with custom header
 
 ```sh
-cargo run -- -X POST -H 'Authorization: Bearer TOKEN' -d 'some data' https://example.com
+cargo run -- --method post -H 'Authorization: Bearer TOKEN' https://httpbin.org/post -j '{"name":"jack","age":20}'
 ```
 
 ### Timeout and no redirects

@@ -45,3 +45,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+
+// let opt = Some(String::from("hello"));
+
+// if let Some(v) = opt {
+//     println!("{}", v);  // OK
+// }
+// // opt is now moved and cannot be used again
+
+// let opt = Some(String::from("hello"));
+
+// if let Some(v) = opt.as_ref() {
+//     println!("{}", v);  // OK
+// }
+// // opt is still usable here because we only borrowed it
+
+// let json_str = String::from("{\"name\":\"John\"}");
+// let body_to_send = Some(json_str.as_bytes().to_vec());
+
+// println!("{:?}", body_to_send);
+// // Output: Some([123, 34, 110, 97, 109, 101, 34, 58, 34, 75, 97, 122, 117, 34, 125])
