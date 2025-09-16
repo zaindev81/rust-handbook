@@ -32,11 +32,23 @@ struct Args {
 }
 
 // cargo run -- "Error" log1.txt log2.txt
+// cargo run -- "Error" log1.txt --line-numbers
+// cargo run -- "Error" log1.txt --line-numbers --case-sensitive
+// cargo run -- "Error" log1.txt --line-numbers --case-sensitive --count
+// cargo run -- "Error" log1.txt --line-numbers --invert
 fn main() {
     let args = Args::parse();
 
     if args.files.is_empty() {
+        // 2. eprintln!("Error: ...")
+        // eprintln! works just like println!, but it writes to standard error (stderr) instead of standard output (stdout).
+        // Why stderr?
+        // Error messages should go to stderr, so they don't get mixed with the program's normal output.
         eprintln!("Error: No files provided to search in.");
+        // Immediately stops the program.
+        // 1 is the exit code (non-zero values usually indicate an error).
+        // 0 → success
+        // Any other number → failure/error
         std::process::exit(1);
     }
 
