@@ -147,6 +147,8 @@ fn main() -> Result<()>{
     // Save the image
     match format {
         ImageFormat::Jpeg => {
+            // NOTE: only JPEG needs special handling for quality
+
             // Use custom JPEG encoder for quality control
             // It gives fine-grained control over JPEG quality, which isn't possible when using the generic save() method.
             let mut buffer = Vec::new();
@@ -222,12 +224,12 @@ fn calculate_dimensions(
 fn generate_output_path(input: &Path) -> Result<PathBuf> {
     // file_stem() extracts the filename without its extension.
     let stem = input.file_stem()
-        .context("Input file has no filename")?
+        .context("Input file has no filename")? // if file name is none
         .to_str() // file_stem() gives OsStr, which might not always be valid UTF-8.
-        .context("Invalid filename")?;
+        .context("Invalid filename")?; // if filename is not valid UTF-8
 
     let extension = input.extension()
-        .and_then(|ext| ext.to_str()) // .and_then(|ext| ext.to_str()) → Converts it to &str.
+        .and_then(|ext| ext.to_str()) // .and_then(|ext| ext.to_str()) → Converts it to &str
         .unwrap_or("png");
 
     let parent = input.parent().unwrap_or(Path::new("."));
